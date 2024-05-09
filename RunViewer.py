@@ -7,10 +7,8 @@ app = tk.CTk()
 app.title("Run data viewer")
 
 def loadsave(filename):
-    print("file:", filename)
     file = open(f"C:/Program Files (x86)/Steam/steamapps/common/The Binding of Isaac Rebirth/data/tboi mod/{filename}", encoding="utf-8")
     savedata = json.load(file)
-    print("data:", savedata)
     file.close()
     saves_frame.grid_remove()
     loadinfopage(savedata)
@@ -46,6 +44,8 @@ progresstext1 = tk.CTkLabel(progress_frame, text="0%", anchor="w")
 progresstext2 = tk.CTkLabel(progress_frame, text="0/0", anchor="e")
 #{"bosscount":0,"roomsentered":2,"floor":"Basement I","runid":2,"exited":false,"totalruntime":56587,"enemyCount":6,"diedEnding":true,"dateended":"20240508130847"}
 def loadinfo(index, savedata):
+    if index == 3:
+        reloadsave()
     infotitle.configure(text=f"Run #{index} stats")
     if savedata[index-1]["exited"]:
         ended = "Exited the run"
@@ -60,6 +60,11 @@ def loadinfo(index, savedata):
     text = f"Runtime: {converttime(values["totalruntime"])}\n\nEnemies killed: {values["enemyCount"]}\n\nBosses killed: {values["bosscount"]}\n\nRooms entered: {values["roomsentered"]}\n\nLast floor: {values["floor"]}\n\nStarted: {convertdate(values["datestarted"])}\n\nEnded: {convertdate(values["dateended"])}\n\nEnding: {ended}"
     infotext.configure(text=text)
     print(index)
+
+def reloadsave():
+    for widget in scroll_frame.winfo_children():
+        widget.destroy()
+    loadfile()
 
 def convertdate(date):
     if date == "Not available":
@@ -85,7 +90,7 @@ def loadinfopage(savedata):
     info_frame.grid_propagate(False)
 
     tempscroll_frame.grid(row=0, column=0, padx=20, pady=20)
-
+    scroll_frame.grid_remove()
     progress_frame.place(relx=0.5, rely=0.5, anchor="center", )
 
     progressbar.grid(row=0, column=0, sticky='ew')
